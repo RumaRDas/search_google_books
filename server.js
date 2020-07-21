@@ -1,18 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes');
+const cors =require('cors');
 const path = require("path");
 
+
 const app = express()
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5000;
 
 
 // Define middleware here
-app.use(express.json())
-app.use("/files", express.static(path.resolve(__dirname, "..", "files")))
+app.use(cors());
+app.use(express.json());
 
-// Add routes, both API and view
-app.use(routes);
 
 // Serve up static assets (usually on heroku)
 if (process.env.NODE_ENV !== 'production') {
@@ -21,7 +21,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Connect to the Mongo DB
 try {
-	mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/booklist",{
+	mongoose.connect(process.env.MONGODB_URI,{
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	})
@@ -29,6 +29,10 @@ try {
 } catch (error) {
 	console.log(error)
 }
+
+app.use("/files", express.static(path.resolve(__dirname, "..", "files")))
+// Add routes, both API and view
+app.use(routes);
 
 // Start the API server
 app.listen(PORT, () => {
